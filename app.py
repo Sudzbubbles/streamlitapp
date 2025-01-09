@@ -56,7 +56,7 @@ def show_grid_views():
         """
         ### **Grid Views Explained**
         **Density Grid**:
-        - **Warmer or Brighter Colours**: Represent **higher density regions (clusters)**.
+        - **Lighter Colours**: Represent **higher density regions (clusters)**.
         - **Darker Colours**: Represent **lower density regions (voids)**.
         
         **Timeflow Grid**:
@@ -108,7 +108,7 @@ else:
     st.sidebar.markdown(
         """
         **Density Grid View**:
-        - **Warmer or Brighter Colours**: Represent **higher density regions (clusters)**.
+        - **Lighter Colours**: Represent **higher density regions (clusters)**.
         - **Darker Colours**: Represent **lower density regions (voids)**.
         """
     )
