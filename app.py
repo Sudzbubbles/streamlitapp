@@ -33,23 +33,6 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, genera
 def compute_timeflow(density_grid):
     return 1 / (1 + density_grid)
 
-# Precompute hover region medians for each cell with a fixed 2x2 region
-def precompute_hover_medians(data):
-    medians = np.zeros_like(data)
-    region_size = 2  # Fixed to 2x2
-    half_size = region_size // 2
-
-    for i in range(data.shape[0]):
-        for j in range(data.shape[1]):
-            y_min = max(0, i - half_size)
-            y_max = min(data.shape[0], i + half_size + 1)
-            x_min = max(0, j - half_size)
-            x_max = min(data.shape[1], j + half_size + 1)
-            hover_region = data[y_min:y_max, x_min:x_max]
-            medians[i, j] = np.median(hover_region)
-
-    return medians
-
 # Streamlit UI
 st.title("Interactive Cosmological Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
@@ -116,9 +99,6 @@ else:
     color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
     colorbar_title = "Timeflow (Fast to Slow)"
 
-# Precompute hover medians for a fixed 2x2 region
-hover_values = precompute_hover_medians(data)
-
 # Create an interactive heatmap using Plotly
 fig = go.Figure()
 
@@ -131,8 +111,7 @@ fig.add_trace(
             title_side="right",  # Vertically aligned
             title_font=dict(size=18),  # Larger font for better readability
         ),
-        hoverinfo="skip" if not enable_hover else "z",
-        customdata=hover_values,
+        hoverinfo="z" if enable_hover else "skip",  # Display the value of the patch directly
     )
 )
 
@@ -145,12 +124,6 @@ fig.update_layout(
     yaxis=dict(scaleanchor="x", constrain="domain"),
     dragmode="pan" if enable_zoom else False,
 )
-
-# Add mouse hover display functionality
-if enable_hover:
-    fig.update_traces(
-        hovertemplate="<b>Median (2x2): %{customdata:.2f}</b><extra></extra>",
-    )
 
 # Display the figure
 st.plotly_chart(fig, use_container_width=True)
