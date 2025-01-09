@@ -71,8 +71,8 @@ else:
     fig, ax = plt.subplots(figsize=(8, 8))
     norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())
     im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
-    plt.colorbar(im, ax=ax, label=f"Timeflow (Range: {timeflow_grid.min():.2f} to {timeflow_grid.max():.2f})")
-    ax.set_title("Timeflow Grid")
+    plt.colorbar(im, ax=ax, label="Timeflow (Faster to Slower)")
+    ax.set_title("Timeflow Grid (Faster = Low Density, Slower = High Density)")
 
 # Display the plot
 ax.set_xlabel("Regions (X-axis)")
