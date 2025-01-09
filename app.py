@@ -15,12 +15,18 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
     normalized_high = high_density_prob / total_prob
     normalized_low = low_density_prob / total_prob
 
-    # Generate a continuous density grid
-    grid = np.random.choice(
-        np.linspace(0.1, 1, 10),  # Generate densities between 0.1 and 1
-        size=(rows, cols),
-        p=[normalized_low] * 5 + [normalized_high] * 5,  # Bias probabilities
-    )
+    # Create a 10-step range of densities between 0.1 and 1
+    density_values = np.linspace(0.1, 1, 10)
+
+    # Create a matching probability distribution for the densities
+    # First 5 values favor low density, last 5 favor high density
+    probabilities = [normalized_low] * 5 + [normalized_high] * 5
+
+    # Normalize the probabilities to ensure they sum to 1
+    probabilities = np.array(probabilities) / np.sum(probabilities)
+
+    # Generate the grid using the adjusted probabilities
+    grid = np.random.choice(density_values, size=(rows, cols), p=probabilities)
     return grid
 
 # Compute timeflow with a smooth gradient
