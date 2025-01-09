@@ -19,7 +19,6 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
     density_values = np.linspace(0.01, 1, 10)
 
     # Create a matching probability distribution for the densities
-    # First 5 values favor low density, last 5 favor high density
     probabilities = [normalized_low] * 5 + [normalized_high] * 5
 
     # Normalize the probabilities to ensure they sum to 1
@@ -69,9 +68,9 @@ if view_type == "Density":
 else:
     # Plot the timeflow grid
     fig, ax = plt.subplots(figsize=(8, 8))
-    norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())
+    norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())  # Dynamic timeflow range
     im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
-    plt.colorbar(im, ax=ax, label="Timeflow (Faster to Slower)")
+    plt.colorbar(im, ax=ax, label=f"Timeflow (Faster: {timeflow_grid.max():.2f}, Slower: {timeflow_grid.min():.2f})")
     ax.set_title("Timeflow Grid (Faster = Low Density, Slower = High Density)")
 
 # Display the plot
