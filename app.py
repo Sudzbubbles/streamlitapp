@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 
-# Generate a density grid with a smooth distribution
+# Generate a density grid with values strictly greater than 0 and up to 1
 def generate_grid(rows, cols, high_density_prob, low_density_prob):
     # Ensure probabilities sum to 1
     total_prob = high_density_prob + low_density_prob
@@ -15,8 +15,8 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
     normalized_high = high_density_prob / total_prob
     normalized_low = low_density_prob / total_prob
 
-    # Create a range of densities from 0 to 1
-    density_values = np.linspace(0, 1, 10)
+    # Create a range of densities strictly greater than 0 and up to 1
+    density_values = np.linspace(0.01, 1, 10)  # Start from 0.01 instead of 0
 
     # Create a matching probability distribution for the densities
     probabilities = [normalized_low] * 5 + [normalized_high] * 5
@@ -59,9 +59,9 @@ view_type = st.sidebar.radio("View Grid Type", ["Timeflow", "Density"])
 if view_type == "Density":
     # Plot the density grid
     fig, ax = plt.subplots(figsize=(8, 8))
-    norm = Normalize(vmin=0, vmax=1)  # Updated range for density
+    norm = Normalize(vmin=0.01, vmax=1)  # Updated range for density
     im = ax.imshow(density_grid, cmap="viridis", norm=norm)
-    plt.colorbar(im, ax=ax, label="Density (0 to 1)")
+    plt.colorbar(im, ax=ax, label="Density (0.01 to 1)")
     ax.set_title("Density Grid")
 else:
     # Plot the timeflow grid
