@@ -146,13 +146,19 @@ st.plotly_chart(fig, use_container_width=True)
 with st.sidebar.expander("Purpose"):
     st.markdown(
         """
-        This app demonstrates a **timescape cosmology model**, focusing on the relationship between **density** and **timeflow**. 
-
-        - Supports two scales: **Parsec** for fine details and **Kiloparsec** for aggregated structures.
-        - Focuses on **density and timeflow relationships**.
-        - Adjusts grid resolution dynamically for simulation of structured averaging.
+        This app demonstrates a **timescape cosmology model**, focusing on the **inverse relationship** between **density** and **timeflow**:
         
-        **How to Use**:
+        - **High-density regions (clusters)** slow down timeflow.
+        - **Low-density regions (voids)** speed up timeflow.
+
+        ### **Features**
+        - **Two Scales**:
+          - **Parsec**: For fine-grained details.
+          - **Kiloparsec**: For aggregated structures.
+        - **Dynamic Grid Resolution**: Adjusts dynamically to simulate **structured averaging**.
+        - **Interactive Visualisation**: Provides an intuitive understanding of how local density variations affect time dilation and regional timeflow.
+        
+        ### **How to Use**
         - **Select Scale**: Choose between "Parsec" and "Kiloparsec" to explore different resolutions.
         - **Adjust Density Parameters**: Use sliders to control high-density (clusters) and low-density (voids) probabilities.
         - **Toggle Views**: Switch between Density and Timeflow grid views to visualise their inverse relationship.
