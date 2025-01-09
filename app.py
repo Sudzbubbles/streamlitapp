@@ -45,8 +45,14 @@ grid_size = st.sidebar.slider("Grid Size", 10, 100, 50, step=10)
 high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 0, 100, 50)
 low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
 
-# Generate grid and compute timeflow
-density_grid = generate_grid(grid_size, grid_size, high_density_prob, low_density_prob)
+# Retain grid pattern across toggles
+# Use `st.cache` to cache the density grid based on the L and H values
+@st.cache
+def get_density_grid(grid_size, high_density_prob, low_density_prob):
+    return generate_grid(grid_size, grid_size, high_density_prob, low_density_prob)
+
+# Generate density grid (cached) and compute timeflow grid
+density_grid = get_density_grid(grid_size, high_density_prob, low_density_prob)
 timeflow_grid = compute_timeflow(density_grid)
 
 # Add a toggle for the view
