@@ -92,7 +92,7 @@ if view_type == "Density":
 else:
     data = timeflow_grid
     color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
-    colorbar_title = "Timeflow (Fast to Slow)"
+    colorbar_title = "Timeflow (Slow to Fast)"
 
 # Set the hover mode (default to "Single Patch")
 hover_mode = "Single Patch"
