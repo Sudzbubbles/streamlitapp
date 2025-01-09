@@ -16,14 +16,8 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, genera
         high_density_prob, low_density_prob = 50, 50
         total_prob = 100
 
-    # Apply generation scale to probabilities
-    normalized_high = (high_density_prob / total_prob) * generation_scale
-    normalized_low = (low_density_prob / total_prob) * generation_scale
-
-    # Normalize the scaled probabilities to sum to 1
-    prob_sum = normalized_high + normalized_low
-    normalized_high /= prob_sum
-    normalized_low /= prob_sum
+    normalized_high = high_density_prob / total_prob
+    normalized_low = low_density_prob / total_prob
 
     # Create the grid
     density_values = np.linspace(0.01, 1, 10)
@@ -31,6 +25,8 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, genera
     probabilities = np.array(probabilities) / np.sum(probabilities)
 
     grid = np.random.choice(density_values, size=(rows, cols), p=probabilities)
+    # Apply generation scale as contrast adjustment
+    grid = grid ** generation_scale
     return grid
 
 # Compute timeflow with a smooth gradient
@@ -85,7 +81,7 @@ generation_scale = st.sidebar.slider(
     max_value=2.0, 
     value=1.0, 
     step=0.1, 
-    help="Adjust the overall probability scale for high and low-density regions."
+    help="Adjusts the contrast between high-density (clusters) and low-density (voids), affecting the timeflow variations."
 )
 
 # Toggle for zoom functionality
@@ -173,13 +169,13 @@ with st.sidebar.expander("Purpose"):
           - **Parsec**: For fine-grained details.
           - **Kiloparsec**: For aggregated structures.
         - **Dynamic Grid Resolution**: Adjusts dynamically to simulate **structured averaging**.
-        - **Generation Scale**: Globally modifies the probability of high and low-density regions.
+        - **Generation Scale**: Adjusts the contrast between clusters (dense regions) and voids (sparse regions), amplifying or smoothing timeflow variations.
         - **Interactive Visualisation**: Provides an intuitive understanding of how local density variations affect time dilation and regional timeflow.
         
         ### **How to Use**
         - **Select Scale**: Choose between "Parsec" and "Kiloparsec" to explore different resolutions.
         - **Adjust Density Parameters**: Use sliders to control high-density (clusters) and low-density (voids) probabilities.
-        - **Modify Generation Scale**: Use the slider to globally adjust the probabilities for high and low-density regions.
+        - **Modify Generation Scale**: Use the slider to amplify or smooth the contrast between clusters and voids.
         - **Toggle Views**: Switch between Density and Timeflow grid views to visualise their inverse relationship.
         """
     )
@@ -191,7 +187,8 @@ with st.sidebar.expander("Grid Views Explained"):
         **Density Grid**:
         - **Lighter Colours**: Represent **higher density regions (clusters)**.
         - **Darker Colours**: Represent **lower density regions (voids)**.
-        
+        - **Generation Scale**: Adjusts the contrast between clusters and voids, affecting the grid's appearance.
+
         **Timeflow Grid**:
         - **Lighter Colours**: Represent **slower timeflow**, corresponding to **higher density regions (clusters)**.
         - **Darker Colours**: Represent **faster timeflow**, corresponding to **lower density regions (voids)**.
