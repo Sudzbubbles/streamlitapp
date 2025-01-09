@@ -96,20 +96,20 @@ fig.add_trace(
     )
 )
 
-# Configure layout for zoom functionality
-if enable_zoom:
-    fig.update_layout(
-        xaxis=dict(scaleanchor="y", constrain="domain"),
-        yaxis=dict(scaleanchor="x", constrain="domain"),
-        dragmode="pan",
-    )
-else:
-    fig.update_layout(dragmode=False)
+# Configure layout for better UI scaling
+fig.update_layout(
+    width=800,  # Set a fixed width for the plot
+    height=800,  # Set a fixed height for the plot
+    margin=dict(l=10, r=10, t=10, b=10),  # Minimal margins for a clean look
+    xaxis=dict(scaleanchor="y", constrain="domain"),  # Keep axes square
+    yaxis=dict(scaleanchor="x", constrain="domain"),
+    dragmode="pan" if enable_zoom else False,  # Enable/disable panning
+)
 
 # Add hover median functionality
 if enable_hover:
     fig.update_traces(
-        hovertemplate="<b>Median (2x2): %{z:.2f}</b><extra></extra>",
+        hovertemplate="<b>Value: %{z:.2f}</b><extra></extra>",
     )
 
 # Display the figure
