@@ -91,10 +91,7 @@ generation_scale = st.sidebar.slider(
 st.sidebar.subheader("Hover Display")
 if st.sidebar.button("Single Patch Value"):
     st.session_state.hover_mode = "Single Patch"
-if st.sidebar.button("2x2 Median"):
-    st.session_state.hover_mode = "2x2 Median"
-if st.sidebar.button("3x3 Median"):
-    st.session_state.hover_mode = "3x3 Median"
+
 
 # Toggle for zoom functionality
 enable_zoom = st.sidebar.checkbox("Enable Zoom", value=True)
