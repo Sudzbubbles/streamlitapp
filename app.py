@@ -149,7 +149,7 @@ with st.sidebar.expander("Purpose"):
         This app demonstrates a **timescape cosmology model**, focusing on the relationship between **density** and **timeflow**. 
 
         - Supports two scales: **Parsec** for fine details and **Kiloparsec** for aggregated structures.
-        - Focuses on **density and timeflow relationships** by removing cosmic evolution steps.
+        - Focuses on **density and timeflow relationships**.
         - Adjusts grid resolution dynamically for accurate structured averaging.
         
         **How to Use**:
