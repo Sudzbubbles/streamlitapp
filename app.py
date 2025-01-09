@@ -150,7 +150,7 @@ with st.sidebar.expander("Purpose"):
 
         - Supports two scales: **Parsec** for fine details and **Kiloparsec** for aggregated structures.
         - Focuses on **density and timeflow relationships**.
-        - Adjusts grid resolution dynamically for accurate structured averaging.
+        - Adjusts grid resolution dynamically for simulation of structured averaging.
         
         **How to Use**:
         - **Select Scale**: Choose between "Parsec" and "Kiloparsec" to explore different resolutions.
