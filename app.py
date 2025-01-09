@@ -55,15 +55,15 @@ timeflow_grid = compute_timeflow(density_grid)
 view_type = st.sidebar.radio(
     "View Grid Type", 
     ["Timeflow", "Density"],
-    help="Switch between timeflow and density views. Timeflow is faster in low-density regions and slower in high-density regions."
+    help="Switch between timeflow and density views. Timeflow is faster at the top (low density) and slower at the bottom (high density)."
 )
 
 # Add a note below the controls to clarify the relationship
 st.sidebar.markdown(
     """
     **Interpretation Key**:
-    - **Faster Timeflow**: Bottom of the grid (low density, voids).
-    - **Slower Timeflow**: Top of the grid (high density, clusters).
+    - **Faster Timeflow**: Top of the color gradient (low density, voids).
+    - **Slower Timeflow**: Bottom of the color gradient (high density, clusters).
     """
 )
 
@@ -80,7 +80,7 @@ else:
     # Plot the timeflow grid
     norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())  # Dynamic timeflow range
     im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
-    plt.colorbar(im, ax=ax, label="Timeflow (Faster at Bottom, Slower at Top)")
+    plt.colorbar(im, ax=ax, label="Timeflow (Faster at Top, Slower at Bottom)")
     ax.set_title("Timeflow Grid (Faster = Low Density, Slower = High Density)")
 
 # Display the plot
