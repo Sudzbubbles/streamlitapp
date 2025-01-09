@@ -15,8 +15,8 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
     normalized_high = high_density_prob / total_prob
     normalized_low = low_density_prob / total_prob
 
-    # Create a 10-step range of densities between 0.1 and 1
-    density_values = np.linspace(0.1, 1, 10)
+    # Create a 10-step range of densities between 0.01 and 1
+    density_values = np.linspace(0.01, 1, 10)
 
     # Create a matching probability distribution for the densities
     # First 5 values favor low density, last 5 favor high density
@@ -32,7 +32,7 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
 # Compute timeflow with a smooth gradient
 def compute_timeflow(density_grid):
     # Timeflow is inversely proportional to density
-    return np.exp(-density_grid)
+    return 1 / (1 + density_grid)  # Modified for a more realistic range
 
 # Streamlit UI
 st.title("Interactive Map of Regional Timeflow and Density")
@@ -62,16 +62,16 @@ view_type = st.sidebar.radio("View Grid Type", ["Timeflow", "Density"])
 if view_type == "Density":
     # Plot the density grid
     fig, ax = plt.subplots(figsize=(8, 8))
-    norm = Normalize(vmin=density_grid.min(), vmax=density_grid.max())
+    norm = Normalize(vmin=0.01, vmax=1)  # Updated range for density
     im = ax.imshow(density_grid, cmap="viridis", norm=norm)
-    plt.colorbar(im, ax=ax, label="Density")
+    plt.colorbar(im, ax=ax, label="Density (0.01 to 1)")
     ax.set_title("Density Grid")
 else:
     # Plot the timeflow grid
     fig, ax = plt.subplots(figsize=(8, 8))
     norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())
     im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
-    plt.colorbar(im, ax=ax, label="Timeflow")
+    plt.colorbar(im, ax=ax, label=f"Timeflow (Range: {timeflow_grid.min():.2f} to {timeflow_grid.max():.2f})")
     ax.set_title("Timeflow Grid")
 
 # Display the plot
