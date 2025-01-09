@@ -31,11 +31,11 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
 
 # Compute timeflow with a smooth gradient
 def compute_timeflow(density_grid):
-    # Timeflow decays exponentially with density
+    # Timeflow is inversely proportional to density
     return np.exp(-density_grid)
 
 # Streamlit UI
-st.title("Interactive Map of Regional Timeflow")
+st.title("Interactive Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
 
 # Grid size slider
@@ -49,19 +49,26 @@ low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
 density_grid = generate_grid(grid_size, grid_size, high_density_prob, low_density_prob)
 timeflow_grid = compute_timeflow(density_grid)
 
-# Plot the grid
-fig, ax = plt.subplots(figsize=(8, 8))
-norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())
-im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
-plt.colorbar(im, ax=ax, label="Timeflow")
+# Add a toggle for the view
+view_type = st.sidebar.radio("View Grid Type", ["Timeflow", "Density"])
 
-# Annotate cells for small grids
-if grid_size <= 20:
-    for i in range(grid_size):
-        for j in range(grid_size):
-            ax.text(j, i, f"{density_grid[i, j]:.2f}", ha="center", va="center", fontsize=6, color="white")
+# Plot the selected grid
+if view_type == "Density":
+    # Plot the density grid
+    fig, ax = plt.subplots(figsize=(8, 8))
+    norm = Normalize(vmin=density_grid.min(), vmax=density_grid.max())
+    im = ax.imshow(density_grid, cmap="viridis", norm=norm)
+    plt.colorbar(im, ax=ax, label="Density")
+    ax.set_title("Density Grid")
+else:
+    # Plot the timeflow grid
+    fig, ax = plt.subplots(figsize=(8, 8))
+    norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())
+    im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
+    plt.colorbar(im, ax=ax, label="Timeflow")
+    ax.set_title("Timeflow Grid")
 
-ax.set_title("Regional Timeflow Map")
+# Display the plot
 ax.set_xlabel("Regions (X-axis)")
 ax.set_ylabel("Regions (Y-axis)")
 st.pyplot(fig)
