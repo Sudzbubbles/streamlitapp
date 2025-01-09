@@ -48,7 +48,7 @@ def precompute_hover_medians(data):
     return medians
 
 # Streamlit UI
-st.title("Interactive Map of Regional Timeflow and Density")
+st.title("Interactive Map of Regional Timeflow and Density on a Cosmological Scale")
 st.sidebar.header("Controls")
 
 # Set default scale in session state
