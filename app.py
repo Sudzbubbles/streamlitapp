@@ -15,13 +15,11 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
     normalized_high = high_density_prob / total_prob
     normalized_low = low_density_prob / total_prob
 
-    # Create a 10-step range of densities between 0.01 and 1
-    density_values = np.linspace(0.01, 1, 10)
+    # Create a range of densities from 0 to 1
+    density_values = np.linspace(0, 1, 10)
 
     # Create a matching probability distribution for the densities
     probabilities = [normalized_low] * 5 + [normalized_high] * 5
-
-    # Normalize the probabilities to ensure they sum to 1
     probabilities = np.array(probabilities) / np.sum(probabilities)
 
     # Generate the grid using the adjusted probabilities
@@ -61,17 +59,17 @@ view_type = st.sidebar.radio("View Grid Type", ["Timeflow", "Density"])
 if view_type == "Density":
     # Plot the density grid
     fig, ax = plt.subplots(figsize=(8, 8))
-    norm = Normalize(vmin=0.01, vmax=1)  # Updated range for density
+    norm = Normalize(vmin=0, vmax=1)  # Updated range for density
     im = ax.imshow(density_grid, cmap="viridis", norm=norm)
-    plt.colorbar(im, ax=ax, label="Density (0.01 to 1)")
+    plt.colorbar(im, ax=ax, label="Density (0 to 1)")
     ax.set_title("Density Grid")
 else:
     # Plot the timeflow grid
     fig, ax = plt.subplots(figsize=(8, 8))
     norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())  # Dynamic timeflow range
     im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
-    plt.colorbar(im, ax=ax, label=f"Timeflow (Faster: {timeflow_grid.max():.2f}, Slower: {timeflow_grid.min():.2f})")
-    ax.set_title("Timeflow Grid (Faster = Low Density, Slower = High Density)")
+    plt.colorbar(im, ax=ax, label="Timeflow (Faster to Slower)")
+    ax.set_title("Timeflow Grid (Low Density = Faster, High Density = Slower)")
 
 # Display the plot
 ax.set_xlabel("Regions (X-axis)")
