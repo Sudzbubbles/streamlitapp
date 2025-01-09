@@ -42,7 +42,9 @@ def show_purpose():
         ### **Purpose**
         This interactive app is a **visual tool** designed to explore the relationship between **density** and **timeflow** in a structured grid.
         
-        It demonstrates how **high-density regions (clusters)** result in **slower timeflow**, while **low-density regions (voids)** lead to **faster timeflow**, based on the principles of **timescape cosmology**.
+        It demonstrates that **timeflow is inversely proportional to density, and timeflow changes inversely with density**:
+        - **High-density regions (clusters)** result in **slower timeflow**.
+        - **Low-density regions (voids)** lead to **faster timeflow**.
 
         By visualising these dynamics, the app provides an intuitive understanding of how local density variations affect time dilation and regional timeflow, serving both scientific exploration and educational purposes.
         """
@@ -53,13 +55,13 @@ def show_grid_views():
     st.markdown(
         """
         ### **Grid Views Explained**
-        - **Density Grid**:
-            - **Warmer or Brighter Colours**: Represent **higher density regions (clusters)**.
-            - **Darker Colours**: Represent **lower density regions (voids)**.
+        **Density Grid**:
+        - **Warmer or Brighter Colours**: Represent **higher density regions (clusters)**.
+        - **Darker Colours**: Represent **lower density regions (voids)**.
         
-        - **Timeflow Grid**:
-            - **Lighter Colours**: Represent **slower timeflow**, corresponding to **higher density regions (clusters)**.
-            - **Darker Colours**: Represent **faster timeflow**, corresponding to **lower density regions (voids)**.
+        **Timeflow Grid**:
+        - **Lighter Colours**: Represent **slower timeflow**, corresponding to **higher density regions (clusters)**.
+        - **Darker Colours**: Represent **faster timeflow**, corresponding to **lower density regions (voids)**.
         """
     )
 
@@ -74,8 +76,8 @@ if st.sidebar.button("Explain Grid Views"):
 grid_size = st.sidebar.slider("Grid Size", 10, 100, 50, step=10)
 
 # Probability sliders
-high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 0, 100, 50)
 low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
+high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 0, 100, 50)
 
 # Retain grid pattern across toggles
 @st.cache_data
@@ -89,8 +91,8 @@ timeflow_grid = compute_timeflow(density_grid)
 # Add a toggle for the view
 view_type = st.sidebar.radio(
     "View Grid Type", 
-    ["Timeflow", "Density"],
-    help="Switch between timeflow and density views."
+    ["Density", "Timeflow"],
+    help="Switch between density and timeflow views."
 )
 
 # Add a note below the controls to clarify the relationship
