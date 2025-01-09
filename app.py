@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 # Generate a density grid with values strictly greater than 0 and up to 1
-def generate_grid(rows, cols, high_density_prob, low_density_prob, scale):
+def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, generation_scale):
     if scale == "Parsec":
         resolution = 1
     elif scale == "Kiloparsec":
@@ -16,9 +16,16 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale):
         high_density_prob, low_density_prob = 50, 50
         total_prob = 100
 
-    normalized_high = high_density_prob / total_prob
-    normalized_low = low_density_prob / total_prob
+    # Apply generation scale to probabilities
+    normalized_high = (high_density_prob / total_prob) * generation_scale
+    normalized_low = (low_density_prob / total_prob) * generation_scale
 
+    # Normalize the scaled probabilities to sum to 1
+    prob_sum = normalized_high + normalized_low
+    normalized_high /= prob_sum
+    normalized_low /= prob_sum
+
+    # Create the grid
     density_values = np.linspace(0.01, 1, 10)
     probabilities = [normalized_low] * 5 + [normalized_high] * 5
     probabilities = np.array(probabilities) / np.sum(probabilities)
@@ -71,6 +78,16 @@ with col2:
 low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
 high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 0, 100, 50)
 
+# Generation Scale slider
+generation_scale = st.sidebar.slider(
+    "Generation Scale", 
+    min_value=0.1, 
+    max_value=2.0, 
+    value=1.0, 
+    step=0.1, 
+    help="Adjust the overall probability scale for high and low-density regions."
+)
+
 # Toggle for zoom functionality
 enable_zoom = st.sidebar.checkbox("Enable Zoom", value=True)
 
@@ -79,11 +96,11 @@ enable_hover = st.sidebar.checkbox("Enable Mouse Hover Display", value=True)
 
 # Retain grid pattern across toggles
 @st.cache_data
-def get_density_grid(grid_size, high_density_prob, low_density_prob, scale):
-    return generate_grid(grid_size, grid_size, high_density_prob, low_density_prob, scale)
+def get_density_grid(grid_size, high_density_prob, low_density_prob, scale, generation_scale):
+    return generate_grid(grid_size, grid_size, high_density_prob, low_density_prob, scale, generation_scale)
 
-# Generate density grid and compute timeflow grid based on selected scale
-density_grid = get_density_grid(grid_size, high_density_prob, low_density_prob, st.session_state.scale)
+# Generate density grid and compute timeflow grid based on selected scale and generation scale
+density_grid = get_density_grid(grid_size, high_density_prob, low_density_prob, st.session_state.scale, generation_scale)
 timeflow_grid = compute_timeflow(density_grid)
 
 # Add a toggle for the view
@@ -101,7 +118,7 @@ if view_type == "Density":
 else:
     data = timeflow_grid
     color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
-    colorbar_title = "Timeflow (Slow to Fast)"
+    colorbar_title = "Timeflow (Fast to Slow)"
 
 # Precompute hover medians for a fixed 2x2 region
 hover_values = precompute_hover_medians(data)
@@ -156,11 +173,13 @@ with st.sidebar.expander("Purpose"):
           - **Parsec**: For fine-grained details.
           - **Kiloparsec**: For aggregated structures.
         - **Dynamic Grid Resolution**: Adjusts dynamically to simulate **structured averaging**.
+        - **Generation Scale**: Globally modifies the probability of high and low-density regions.
         - **Interactive Visualisation**: Provides an intuitive understanding of how local density variations affect time dilation and regional timeflow.
         
         ### **How to Use**
         - **Select Scale**: Choose between "Parsec" and "Kiloparsec" to explore different resolutions.
         - **Adjust Density Parameters**: Use sliders to control high-density (clusters) and low-density (voids) probabilities.
+        - **Modify Generation Scale**: Use the slider to globally adjust the probabilities for high and low-density regions.
         - **Toggle Views**: Switch between Density and Timeflow grid views to visualise their inverse relationship.
         """
     )
