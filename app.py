@@ -35,35 +35,37 @@ def compute_timeflow(density_grid):
 st.title("Interactive Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
 
-# Functionality for the "About This Tool" button
-def show_about_tool():
+# Functionality for the "Purpose" section
+def show_purpose():
     st.markdown(
         """
-        ### **About This Tool**
-        **Purpose**:
-        This interactive app serves as a **visual tool** to explore the relationship between **density** and **timeflow** within a structured grid. 
-        It provides an intuitive understanding of the **inverse relationship** between density and timeflow through interactive visuals.
+        ### **Purpose**
+        This interactive app is a **visual tool** designed to explore the relationship between **density** and **timeflow** in a structured grid.
         
-        - **High Density (Clusters)**: Slows timeflow.
-        - **Low Density (Voids)**: Speeds up timeflow.
+        It demonstrates how **high-density regions (clusters)** result in **slower timeflow**, while **low-density regions (voids)** lead to **faster timeflow**, based on the principles of **timescape cosmology**.
+
+        By visualising these dynamics, the app provides an intuitive understanding of how local density variations affect time dilation and regional timeflow, serving both scientific exploration and educational purposes.
         """
     )
 
-# Functionality for the "Explain Grid Views" button
+# Functionality for the "Explain Grid Views" section
 def show_grid_views():
     st.markdown(
         """
         ### **Grid Views Explained**
-        - **Density Grid**: Visualises the density of regions, ranging from **low density (voids)** to **high density (clusters)**.
-        - **Timeflow Grid**: 
-            - **Lighter Colours**: Represent **higher density regions** (clusters) and **slower timeflow**.
-            - **Darker Colours**: Represent **lower density regions** (voids) and **faster timeflow**.
+        - **Density Grid**:
+            - **Warmer or Brighter Colours**: Represent **higher density regions (clusters)**.
+            - **Darker Colours**: Represent **lower density regions (voids)**.
+        
+        - **Timeflow Grid**:
+            - **Lighter Colours**: Represent **slower timeflow**, corresponding to **higher density regions (clusters)**.
+            - **Darker Colours**: Represent **faster timeflow**, corresponding to **lower density regions (voids)**.
         """
     )
 
 # Add buttons in the sidebar
-if st.sidebar.button("About This Tool"):
-    show_about_tool()
+if st.sidebar.button("Purpose"):
+    show_purpose()
 
 if st.sidebar.button("Explain Grid Views"):
     show_grid_views()
@@ -88,7 +90,7 @@ timeflow_grid = compute_timeflow(density_grid)
 view_type = st.sidebar.radio(
     "View Grid Type", 
     ["Timeflow", "Density"],
-    help="Switch between timeflow and density views. Timeflow grid shows slow to fast time."
+    help="Switch between timeflow and density views."
 )
 
 # Add a note below the controls to clarify the relationship
@@ -96,16 +98,16 @@ if view_type == "Timeflow":
     st.sidebar.markdown(
         """
         **Timeflow Grid View**:
-        - **Lighter Colours**: Represent **higher density regions** (clusters) and **slower timeflow**.
-        - **Darker Colours**: Represent **lower density regions** (voids) and **faster timeflow**.
+        - **Lighter Colours**: Represent **slower timeflow**, corresponding to **higher density regions (clusters)**.
+        - **Darker Colours**: Represent **faster timeflow**, corresponding to **lower density regions (voids)**.
         """
     )
 else:
     st.sidebar.markdown(
         """
         **Density Grid View**:
-        - **High Density**: Clusters (slower timeflow).
-        - **Low Density**: Voids (faster timeflow).
+        - **Warmer or Brighter Colours**: Represent **higher density regions (clusters)**.
+        - **Darker Colours**: Represent **lower density regions (voids)**.
         """
     )
 
