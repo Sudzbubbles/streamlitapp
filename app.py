@@ -40,7 +40,7 @@ def show_purpose():
     st.markdown(
         """
         ### **Purpose**
-        This interactive app is a **visual tool** designed to explore the relationship between **density** and **timeflow** in a structured grid.
+        This interactive app demonstrates a **timescape cosmology model**, showing the relationship between **density** and **timeflow** in a structured grid.
         
         It demonstrates that **timeflow is inversely proportional to density, and timeflow changes inversely with density**:
         - **High-density regions (clusters)** result in **slower timeflow**.
