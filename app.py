@@ -38,12 +38,30 @@ def compute_timeflow(density_grid):
     # Timeflow is inversely proportional to density
     return 1 / (1 + density_grid)
 
+# Calculate the median for a hover region
+def calculate_hover_median(data, x, y, region_size):
+    half_size = region_size // 2
+    x_min, x_max = max(0, x - half_size), min(data.shape[1], x + half_size + 1)
+    y_min, y_max = max(0, y - half_size), min(data.shape[0], y + half_size + 1)
+    hover_region = data[y_min:y_max, x_min:x_max]
+    return np.median(hover_region)
+
 # Streamlit UI
 st.title("Interactive Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
 
-# Scale selector: Parsec or Kiloparsec
-scale = st.sidebar.selectbox("Select Scale", ["Parsec", "Kiloparsec"])
+# Grid size slider
+grid_size = st.sidebar.slider("Grid Size", 10, 100, 50, step=10)
+
+# Scale buttons under Grid Size
+col1, col2 = st.sidebar.columns(2)
+scale = "Parsec"
+with col1:
+    if st.button("Parsec"):
+        scale = "Parsec"
+with col2:
+    if st.button("Kiloparsec"):
+        scale = "Kiloparsec"
 
 # Probability sliders
 low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
@@ -55,8 +73,8 @@ enable_zoom = st.sidebar.checkbox("Enable Zoom", value=True)
 # Toggle for hover functionality
 enable_hover = st.sidebar.checkbox("Enable Hover Median Display", value=True)
 
-# Grid size slider
-grid_size = st.sidebar.slider("Grid Size", 10, 100, 50, step=10)
+# Hover region size slider
+hover_region_size = st.sidebar.slider("Hover Region Size", 1, 5, 1)
 
 # Retain grid pattern across toggles
 @st.cache_data
@@ -109,7 +127,7 @@ fig.update_layout(
 # Add hover median functionality
 if enable_hover:
     fig.update_traces(
-        hovertemplate="<b>Value: %{z:.2f}</b><extra></extra>",
+        hovertemplate="<b>Median Value (%dx%d): %{z:.2f}</b><extra></extra>" % (hover_region_size, hover_region_size),
     )
 
 # Display the figure
