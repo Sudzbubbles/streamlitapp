@@ -86,9 +86,9 @@ if view_type == "Density":
     plt.colorbar(im, ax=ax, label="Density (0.01 to 1)")
     ax.set_title("Density Grid")
 else:
-    # Plot the timeflow grid
+    # Plot the timeflow grid with reversed colormap
     norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())  # Dynamic timeflow range
-    im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
+    im = ax.imshow(timeflow_grid, cmap="plasma_r", norm=norm)  # Reversed colormap
     plt.colorbar(im, ax=ax, label="Timeflow (Slow to Fast)")
     ax.set_title("Timeflow Grid (Slow = High Density, Fast = Low Density)")
 
