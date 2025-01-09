@@ -98,7 +98,7 @@ if view_type == "Density":
 else:
     data = timeflow_grid
     color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
-    colorbar_title = "Timeflow (Fast to Slow)"  # Updated label
+    colorbar_title = "Timeflow (Slow to Fast)"  # Updated label
 
 # Precompute hover medians for a fixed 2x2 region
 hover_values = precompute_hover_medians(data)
