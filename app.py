@@ -11,11 +11,8 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, genera
 
     rows, cols = rows // resolution, cols // resolution
 
+    # Normalize probabilities to ensure valid distribution
     total_prob = high_density_prob + low_density_prob
-    if total_prob == 0:
-        high_density_prob, low_density_prob = 50, 50
-        total_prob = 100
-
     normalized_high = high_density_prob / total_prob
     normalized_low = low_density_prob / total_prob
 
@@ -52,8 +49,8 @@ with col2:
 
 # Density and Generation Scale Parameters
 st.sidebar.subheader("Density Parameters")
-low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
-high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 0, 100, 50)
+low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 1, 100, 50)  # Minimum set to 1%
+high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 1, 100, 50)  # Minimum set to 1%
 
 st.sidebar.subheader("Generation Scale")
 generation_scale = st.sidebar.slider(
@@ -94,14 +91,6 @@ else:
     color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
     colorbar_title = "Timeflow (Slow to Fast)"
 
-# Set the hover mode (default to "Single Patch")
-hover_mode = "Single Patch"
-
-# Compute hover values based on the hover mode
-if hover_mode == "Single Patch":
-    hover_values = data
-    hover_template = "<b>Value: %{z:.2f}</b><extra></extra>"
-
 # Create an interactive heatmap using Plotly
 fig = go.Figure()
 
@@ -114,8 +103,7 @@ fig.add_trace(
             title_side="right",  # Vertically aligned
             title_font=dict(size=18),  # Larger font for better readability
         ),
-        customdata=hover_values,  # Custom data for hover
-        hovertemplate=hover_template,  # Dynamically updated template
+        hoverinfo="z",  # Display the value of the patch directly
     )
 )
 
