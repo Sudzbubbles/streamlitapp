@@ -55,9 +55,9 @@ def show_grid_views():
         """
         ### **Grid Views Explained**
         - **Density Grid**: Visualises the density of regions, ranging from **low density (voids)** to **high density (clusters)**.
-        - **Timeflow Grid**: Shows how **timeflow changes inversely with density**:
-            - **Slow Timeflow**: High density (bottom of the grid).
-            - **Fast Timeflow**: Low density (top of the grid).
+        - **Timeflow Grid**: 
+            - **Lighter Colours**: Represent **higher density regions** (clusters) and **slower timeflow**.
+            - **Darker Colours**: Represent **lower density regions** (voids) and **faster timeflow**.
         """
     )
 
@@ -96,8 +96,8 @@ if view_type == "Timeflow":
     st.sidebar.markdown(
         """
         **Timeflow Grid View**:
-        - **Slow Timeflow**: Bottom of the grid (high density, clusters).
-        - **Fast Timeflow**: Top of the grid (low density, voids).
+        - **Lighter Colours**: Represent **higher density regions** (clusters) and **slower timeflow**.
+        - **Darker Colours**: Represent **lower density regions** (voids) and **faster timeflow**.
         """
     )
 else:
