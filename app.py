@@ -67,9 +67,6 @@ generation_scale = st.sidebar.slider(
     help="Adjusts the contrast between high-density (clusters) and low-density (voids), affecting the timeflow variations."
 )
 
-# Toggle for hover functionality
-enable_hover = st.sidebar.checkbox("Enable Mouse Hover Display", value=True)
-
 # Retain grid pattern across toggles
 @st.cache_data
 def get_density_grid(grid_size, high_density_prob, low_density_prob, scale, generation_scale):
@@ -108,7 +105,7 @@ fig.add_trace(
             title_side="right",  # Vertically aligned
             title_font=dict(size=18),  # Larger font for better readability
         ),
-        hoverinfo="z" if enable_hover else "skip",  # Display the value of the patch directly
+        hoverinfo="z",  # Display the value of the patch directly
     )
 )
 
