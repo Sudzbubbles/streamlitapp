@@ -110,7 +110,11 @@ fig.add_trace(
     go.Heatmap(
         z=data,
         colorscale=color_scale,
-        colorbar=dict(title=colorbar_title),
+        colorbar=dict(
+            title=colorbar_title,
+            title_side="right",  # Tilt the title vertically
+            title_font=dict(size=12),  # Adjust font size for readability
+        ),
         hoverinfo="skip" if not enable_hover else "z",
         customdata=hover_values,
     )
