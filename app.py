@@ -30,9 +30,10 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale):
 def compute_timeflow(density_grid):
     return 1 / (1 + density_grid)
 
-# Precompute hover region medians for each cell
-def precompute_hover_medians(data, region_size):
+# Precompute hover region medians for each cell with a fixed 2x2 region
+def precompute_hover_medians(data):
     medians = np.zeros_like(data)
+    region_size = 2  # Fixed to 2x2
     half_size = region_size // 2
 
     for i in range(data.shape[0]):
@@ -73,9 +74,6 @@ enable_zoom = st.sidebar.checkbox("Enable Zoom", value=True)
 # Toggle for hover functionality
 enable_hover = st.sidebar.checkbox("Enable Mouse Hover Display", value=True)
 
-# Hover region size slider
-hover_region_size = st.sidebar.slider("Hover Region Size", 1, 5, 1)
-
 # Retain grid pattern across toggles
 @st.cache_data
 def get_density_grid(grid_size, high_density_prob, low_density_prob, scale):
@@ -102,8 +100,8 @@ else:
     color_scale = "Plasma"
     colorbar_title = "Timeflow (Slow to Fast)"
 
-# Precompute hover medians
-hover_values = precompute_hover_medians(data, hover_region_size)
+# Precompute hover medians for a fixed 2x2 region
+hover_values = precompute_hover_medians(data)
 
 # Create an interactive heatmap using Plotly
 fig = go.Figure()
@@ -130,12 +128,8 @@ fig.update_layout(
 
 # Add mouse hover display functionality
 if enable_hover:
-    hover_label = (
-        f"<b>Value: {{z:.2f}}</b>" if hover_region_size == 1 
-        else f"<b>Median ({hover_region_size}x{hover_region_size}): {{customdata:.2f}}</b>"
-    )
     fig.update_traces(
-        hovertemplate=hover_label + "<extra></extra>",
+        hovertemplate="<b>Median (2x2): %{customdata:.2f}</b><extra></extra>",
     )
 
 # Display the figure
