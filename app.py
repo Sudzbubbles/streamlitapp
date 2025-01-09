@@ -33,22 +33,6 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, genera
 def compute_timeflow(density_grid):
     return 1 / (1 + density_grid)
 
-# Precompute hover region medians for each patch
-def precompute_hover_medians(data, region_size):
-    medians = np.zeros_like(data)
-    half_size = region_size // 2
-
-    for i in range(data.shape[0]):
-        for j in range(data.shape[1]):
-            y_min = max(0, i - half_size)
-            y_max = min(data.shape[0], i + half_size + 1)
-            x_min = max(0, j - half_size)
-            x_max = min(data.shape[1], j + half_size + 1)
-            hover_region = data[y_min:y_max, x_min:x_max]
-            medians[i, j] = np.median(hover_region)
-
-    return medians
-
 # Streamlit UI
 st.title("Interactive Cosmological Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
@@ -110,19 +94,13 @@ else:
     color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
     colorbar_title = "Timeflow (Fast to Slow)"
 
-# Set the hover mode (default is "Single Patch")
+# Set the hover mode (default to "Single Patch")
 hover_mode = "Single Patch"
 
 # Compute hover values based on the hover mode
 if hover_mode == "Single Patch":
     hover_values = data
     hover_template = "<b>Value: %{z:.2f}</b><extra></extra>"
-elif hover_mode == "2x2 Median":
-    hover_values = precompute_hover_medians(data, 2)
-    hover_template = "<b>Median (2x2): %{customdata:.2f}</b><extra></extra>"
-elif hover_mode == "3x3 Median":
-    hover_values = precompute_hover_medians(data, 3)
-    hover_template = "<b>Median (3x3): %{customdata:.2f}</b><extra></extra>"
 
 # Create an interactive heatmap using Plotly
 fig = go.Figure()
@@ -153,3 +131,43 @@ fig.update_layout(
 
 # Display the figure
 st.plotly_chart(fig, use_container_width=True)
+
+# Purpose Section (Collapsible at the bottom of the sidebar)
+with st.sidebar.expander("Purpose"):
+    st.markdown(
+        """
+        This app demonstrates a **timescape cosmology model**, focusing on the **inverse relationship** between **density** and **timeflow**:
+        
+        - **High-density regions (clusters)** slow down timeflow.
+        - **Low-density regions (voids)** speed up timeflow.
+
+        ### **Features**
+        - **Two Scales**:
+          - **Parsec**: For fine-grained details.
+          - **Kiloparsec**: For aggregated structures.
+        - **Dynamic Grid Resolution**: Adjusts dynamically to simulate **structured averaging**.
+        - **Generation Scale**: Adjusts the contrast between clusters (dense regions) and voids (sparse regions), amplifying or smoothing timeflow variations.
+        - **Interactive Visualisation**: Provides an intuitive understanding of how local density variations affect time dilation and regional timeflow.
+        
+        ### **How to Use**
+        - **Select Scale**: Choose between "Parsec" and "Kiloparsec" to explore different resolutions.
+        - **Adjust Density Parameters**: Use sliders to control high-density (clusters) and low-density (voids) probabilities.
+        - **Modify Generation Scale**: Use the slider to amplify or smooth the contrast between clusters and voids.
+        - **Toggle Views**: Switch between Density and Timeflow grid views to visualise their inverse relationship.
+        """
+    )
+
+# Grid Views Explained Section (Collapsible at the bottom of the sidebar)
+with st.sidebar.expander("Grid Views Explained"):
+    st.markdown(
+        """
+        **Density Grid**:
+        - **Lighter Colours**: Represent **higher density regions (clusters)**.
+        - **Darker Colours**: Represent **lower density regions (voids)**.
+        - **Generation Scale**: Adjusts the contrast between clusters and voids, affecting the grid's appearance.
+
+        **Timeflow Grid**:
+        - **Lighter Colours**: Represent **slower timeflow**, corresponding to **higher density regions (clusters)**.
+        - **Darker Colours**: Represent **faster timeflow**, corresponding to **lower density regions (voids)**.
+        """
+    )
