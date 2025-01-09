@@ -30,6 +30,10 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, genera
 def compute_timeflow(density_grid):
     return 1 / (1 + density_grid)
 
+# Initialize default scale in session_state
+if "scale" not in st.session_state:
+    st.session_state.scale = "Parsec"
+
 # Streamlit UI
 st.title("Interactive Cosmological Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
