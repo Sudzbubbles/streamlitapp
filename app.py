@@ -51,18 +51,21 @@ def precompute_hover_medians(data):
 st.title("Interactive Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
 
+# Set default scale in session state
+if "scale" not in st.session_state:
+    st.session_state.scale = "Parsec"
+
 # Grid size slider
 grid_size = st.sidebar.slider("Grid Size", 10, 100, 50, step=10)
 
 # Scale buttons under Grid Size
 col1, col2 = st.sidebar.columns(2)
-scale = "Parsec"
 with col1:
     if st.button("Parsec"):
-        scale = "Parsec"
+        st.session_state.scale = "Parsec"
 with col2:
     if st.button("Kiloparsec"):
-        scale = "Kiloparsec"
+        st.session_state.scale = "Kiloparsec"
 
 # Probability sliders
 low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
@@ -79,8 +82,8 @@ enable_hover = st.sidebar.checkbox("Enable Mouse Hover Display", value=True)
 def get_density_grid(grid_size, high_density_prob, low_density_prob, scale):
     return generate_grid(grid_size, grid_size, high_density_prob, low_density_prob, scale)
 
-# Generate density grid and compute timeflow grid
-density_grid = get_density_grid(grid_size, high_density_prob, low_density_prob, scale)
+# Generate density grid and compute timeflow grid based on selected scale
+density_grid = get_density_grid(grid_size, high_density_prob, low_density_prob, st.session_state.scale)
 timeflow_grid = compute_timeflow(density_grid)
 
 # Add a toggle for the view
@@ -98,7 +101,7 @@ if view_type == "Density":
 else:
     data = timeflow_grid
     color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
-    colorbar_title = "Timeflow (Slow to Fast)"  # Updated label
+    colorbar_title = "Timeflow (Fast to Slow)"
 
 # Precompute hover medians for a fixed 2x2 region
 hover_values = precompute_hover_medians(data)
