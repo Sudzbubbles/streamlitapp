@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 
-# Generate a density grid with normalized probabilities
+# Generate a density grid with a smooth distribution
 def generate_grid(rows, cols, high_density_prob, low_density_prob):
-    # Ensure the probabilities sum to 1
+    # Ensure probabilities sum to 1
     total_prob = high_density_prob + low_density_prob
     if total_prob == 0:
         high_density_prob = 50
@@ -15,17 +15,18 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob):
     normalized_high = high_density_prob / total_prob
     normalized_low = low_density_prob / total_prob
 
-    # Generate the grid
+    # Generate a continuous density grid
     grid = np.random.choice(
-        [0.1, 1],  # Low density (0.1), High density (1)
+        np.linspace(0.1, 1, 10),  # Generate densities between 0.1 and 1
         size=(rows, cols),
-        p=[normalized_low, normalized_high],
+        p=[normalized_low] * 5 + [normalized_high] * 5,  # Bias probabilities
     )
     return grid
 
-# Compute timeflow from density
+# Compute timeflow with a smooth gradient
 def compute_timeflow(density_grid):
-    return 1 / density_grid
+    # Timeflow decays exponentially with density
+    return np.exp(-density_grid)
 
 # Streamlit UI
 st.title("Interactive Map of Regional Timeflow")
@@ -45,14 +46,14 @@ timeflow_grid = compute_timeflow(density_grid)
 # Plot the grid
 fig, ax = plt.subplots(figsize=(8, 8))
 norm = Normalize(vmin=timeflow_grid.min(), vmax=timeflow_grid.max())
-im = ax.imshow(timeflow_grid, cmap="viridis", norm=norm)
+im = ax.imshow(timeflow_grid, cmap="plasma", norm=norm)
 plt.colorbar(im, ax=ax, label="Timeflow")
 
 # Annotate cells for small grids
 if grid_size <= 20:
     for i in range(grid_size):
         for j in range(grid_size):
-            ax.text(j, i, f"{density_grid[i, j]:.1f}", ha="center", va="center", fontsize=6, color="white")
+            ax.text(j, i, f"{density_grid[i, j]:.2f}", ha="center", va="center", fontsize=6, color="white")
 
 ax.set_title("Regional Timeflow Map")
 ax.set_xlabel("Regions (X-axis)")
