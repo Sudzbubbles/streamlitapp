@@ -4,50 +4,47 @@ import plotly.graph_objects as go
 
 # Generate a density grid with values strictly greater than 0 and up to 1
 def generate_grid(rows, cols, high_density_prob, low_density_prob, scale):
-    # Adjust grid resolution based on scale
     if scale == "Parsec":
-        resolution = 1  # Finest resolution
+        resolution = 1
     elif scale == "Kiloparsec":
-        resolution = 10  # Coarser resolution
+        resolution = 10
 
-    rows, cols = rows // resolution, cols // resolution  # Adjust grid size
+    rows, cols = rows // resolution, cols // resolution
 
-    # Ensure probabilities sum to 1
     total_prob = high_density_prob + low_density_prob
     if total_prob == 0:
-        high_density_prob = 50
-        low_density_prob = 50
+        high_density_prob, low_density_prob = 50, 50
         total_prob = 100
 
     normalized_high = high_density_prob / total_prob
     normalized_low = low_density_prob / total_prob
 
-    # Create a range of densities strictly greater than 0 and up to 1
     density_values = np.linspace(0.01, 1, 10)
-
-    # Create a matching probability distribution for the densities
     probabilities = [normalized_low] * 5 + [normalized_high] * 5
     probabilities = np.array(probabilities) / np.sum(probabilities)
 
-    # Generate the grid using the adjusted probabilities
     grid = np.random.choice(density_values, size=(rows, cols), p=probabilities)
     return grid
 
 # Compute timeflow with a smooth gradient
 def compute_timeflow(density_grid):
-    # Timeflow is inversely proportional to density
     return 1 / (1 + density_grid)
 
-# Calculate the value (or median for larger regions) for a hover region
-def calculate_hover_value(data, x, y, region_size):
+# Precompute hover region medians for each cell
+def precompute_hover_medians(data, region_size):
+    medians = np.zeros_like(data)
     half_size = region_size // 2
-    x_min, x_max = max(0, x - half_size), min(data.shape[1], x + half_size + 1)
-    y_min, y_max = max(0, y - half_size), min(data.shape[0], y + half_size + 1)
-    hover_region = data[y_min:y_max, x_min:x_max]
-    if region_size == 1:  # Singular patch
-        return hover_region[0, 0]
-    else:  # Median for larger regions
-        return np.median(hover_region)
+
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            y_min = max(0, i - half_size)
+            y_max = min(data.shape[0], i + half_size + 1)
+            x_min = max(0, j - half_size)
+            x_max = min(data.shape[1], j + half_size + 1)
+            hover_region = data[y_min:y_max, x_min:x_max]
+            medians[i, j] = np.median(hover_region)
+
+    return medians
 
 # Streamlit UI
 st.title("Interactive Map of Regional Timeflow and Density")
@@ -105,6 +102,9 @@ else:
     color_scale = "Plasma"
     colorbar_title = "Timeflow (Slow to Fast)"
 
+# Precompute hover medians
+hover_values = precompute_hover_medians(data, hover_region_size)
+
 # Create an interactive heatmap using Plotly
 fig = go.Figure()
 
@@ -113,25 +113,26 @@ fig.add_trace(
         z=data,
         colorscale=color_scale,
         colorbar=dict(title=colorbar_title),
-        hoverinfo="skip" if not enable_hover else "none",
+        hoverinfo="skip" if not enable_hover else "z",
+        customdata=hover_values,
     )
 )
 
 # Configure layout for better UI scaling
 fig.update_layout(
-    width=800,  # Set a fixed width for the plot
-    height=800,  # Set a fixed height for the plot
-    margin=dict(l=10, r=10, t=10, b=10),  # Minimal margins for a clean look
-    xaxis=dict(scaleanchor="y", constrain="domain"),  # Keep axes square
+    width=800,
+    height=800,
+    margin=dict(l=10, r=10, t=10, b=10),
+    xaxis=dict(scaleanchor="y", constrain="domain"),
     yaxis=dict(scaleanchor="x", constrain="domain"),
-    dragmode="pan" if enable_zoom else False,  # Enable/disable panning
+    dragmode="pan" if enable_zoom else False,
 )
 
 # Add mouse hover display functionality
 if enable_hover:
     hover_label = (
         f"<b>Value: {{z:.2f}}</b>" if hover_region_size == 1 
-        else f"<b>Median ({hover_region_size}x{hover_region_size}): {{z:.2f}}</b>"
+        else f"<b>Median ({hover_region_size}x{hover_region_size}): {{customdata:.2f}}</b>"
     )
     fig.update_traces(
         hovertemplate=hover_label + "<extra></extra>",
