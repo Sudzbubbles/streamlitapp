@@ -127,7 +127,7 @@ fig.update_layout(
 # Add hover median functionality
 if enable_hover:
     fig.update_traces(
-        hovertemplate="<b>Median Value (%dx%d): %{z:.2f}</b><extra></extra>" % (hover_region_size, hover_region_size),
+        hovertemplate=f"<b>Median Value ({hover_region_size}x{hover_region_size}): {{z:.2f}}</b><extra></extra>",
     )
 
 # Display the figure
