@@ -35,6 +35,39 @@ def compute_timeflow(density_grid):
 st.title("Interactive Map of Regional Timeflow and Density")
 st.sidebar.header("Controls")
 
+# Functionality for the "About This Tool" button
+def show_about_tool():
+    st.markdown(
+        """
+        ### **About This Tool**
+        **Purpose**:
+        This interactive app serves as a **visual tool** to explore the relationship between **density** and **timeflow** within a structured grid. 
+        It provides an intuitive understanding of the **inverse relationship** between density and timeflow through interactive visuals.
+        
+        - **High Density (Clusters)**: Slows timeflow.
+        - **Low Density (Voids)**: Speeds up timeflow.
+        """
+    )
+
+# Functionality for the "Explain Grid Views" button
+def show_grid_views():
+    st.markdown(
+        """
+        ### **Grid Views Explained**
+        - **Density Grid**: Visualises the density of regions, ranging from **low density (voids)** to **high density (clusters)**.
+        - **Timeflow Grid**: Shows how **timeflow changes inversely with density**:
+            - **Slow Timeflow**: High density (bottom of the grid).
+            - **Fast Timeflow**: Low density (top of the grid).
+        """
+    )
+
+# Add buttons in the sidebar
+if st.sidebar.button("About This Tool"):
+    show_about_tool()
+
+if st.sidebar.button("Explain Grid Views"):
+    show_grid_views()
+
 # Grid size slider
 grid_size = st.sidebar.slider("Grid Size", 10, 100, 50, step=10)
 
