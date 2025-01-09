@@ -38,13 +38,16 @@ def compute_timeflow(density_grid):
     # Timeflow is inversely proportional to density
     return 1 / (1 + density_grid)
 
-# Calculate the median for a hover region
-def calculate_hover_median(data, x, y, region_size):
+# Calculate the value (or median for larger regions) for a hover region
+def calculate_hover_value(data, x, y, region_size):
     half_size = region_size // 2
     x_min, x_max = max(0, x - half_size), min(data.shape[1], x + half_size + 1)
     y_min, y_max = max(0, y - half_size), min(data.shape[0], y + half_size + 1)
     hover_region = data[y_min:y_max, x_min:x_max]
-    return np.median(hover_region)
+    if region_size == 1:  # Singular patch
+        return hover_region[0, 0]
+    else:  # Median for larger regions
+        return np.median(hover_region)
 
 # Streamlit UI
 st.title("Interactive Map of Regional Timeflow and Density")
@@ -71,7 +74,7 @@ high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 0, 100, 5
 enable_zoom = st.sidebar.checkbox("Enable Zoom", value=True)
 
 # Toggle for hover functionality
-enable_hover = st.sidebar.checkbox("Enable Hover Median Display", value=True)
+enable_hover = st.sidebar.checkbox("Enable Mouse Hover Display", value=True)
 
 # Hover region size slider
 hover_region_size = st.sidebar.slider("Hover Region Size", 1, 5, 1)
@@ -110,7 +113,7 @@ fig.add_trace(
         z=data,
         colorscale=color_scale,
         colorbar=dict(title=colorbar_title),
-        hoverinfo="z" if enable_hover else "skip",
+        hoverinfo="skip" if not enable_hover else "none",
     )
 )
 
@@ -124,10 +127,14 @@ fig.update_layout(
     dragmode="pan" if enable_zoom else False,  # Enable/disable panning
 )
 
-# Add hover median functionality
+# Add mouse hover display functionality
 if enable_hover:
+    hover_label = (
+        f"<b>Value: {{z:.2f}}</b>" if hover_region_size == 1 
+        else f"<b>Median ({hover_region_size}x{hover_region_size}): {{z:.2f}}</b>"
+    )
     fig.update_traces(
-        hovertemplate=f"<b>Median Value ({hover_region_size}x{hover_region_size}): {{z:.2f}}</b><extra></extra>",
+        hovertemplate=hover_label + "<extra></extra>",
     )
 
 # Display the figure
