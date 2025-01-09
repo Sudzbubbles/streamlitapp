@@ -97,7 +97,7 @@ if view_type == "Density":
     colorbar_title = "Density (0.01 to 1)"
 else:
     data = timeflow_grid
-    color_scale = "Plasma"
+    color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
     colorbar_title = "Timeflow (Fast to Slow)"  # Updated label
 
 # Precompute hover medians for a fixed 2x2 region
