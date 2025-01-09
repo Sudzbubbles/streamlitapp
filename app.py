@@ -98,7 +98,7 @@ if view_type == "Density":
 else:
     data = timeflow_grid
     color_scale = "Plasma"
-    colorbar_title = "Timeflow (Slow to Fast)"
+    colorbar_title = "Timeflow (Fast to Slow)"  # Updated label
 
 # Precompute hover medians for a fixed 2x2 region
 hover_values = precompute_hover_medians(data)
@@ -112,8 +112,8 @@ fig.add_trace(
         colorscale=color_scale,
         colorbar=dict(
             title=colorbar_title,
-            title_side="right",  # Tilt the title vertically
-            title_font=dict(size=12),  # Adjust font size for readability
+            title_side="right",  # Vertically aligned
+            title_font=dict(size=18),  # Larger font for better readability
         ),
         hoverinfo="skip" if not enable_hover else "z",
         customdata=hover_values,
