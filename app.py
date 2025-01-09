@@ -27,9 +27,25 @@ grid_size = st.sidebar.slider("Grid Size", 10, 100, 50, step=10)
 high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 0, 100, 50)
 low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 0, 100, 50)
 
-# Generate grid
-density_grid = generate_grid(grid_size, grid_size, high_density_prob, low_density_prob)
-timeflow_grid = compute_timeflow(density_grid)
+# Generate a density grid with normalized probabilities
+def generate_grid(rows, cols, high_density_prob, low_density_prob):
+    # Ensure the probabilities sum to 1
+    total_prob = high_density_prob + low_density_prob
+    if total_prob == 0:
+        high_density_prob = 50
+        low_density_prob = 50
+        total_prob = 100
+
+    normalized_high = high_density_prob / total_prob
+    normalized_low = low_density_prob / total_prob
+
+    # Generate the grid
+    grid = np.random.choice(
+        [0.1, 1],  # Low density (0.1), High density (1)
+        size=(rows, cols),
+        p=[normalized_low, normalized_high],
+    )
+    return grid
 
 # Plot the grid
 fig, ax = plt.subplots(figsize=(8, 8))
