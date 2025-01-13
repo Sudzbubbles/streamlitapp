@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
-# Generate a density grid with values strictly greater than 0 and up to 1
+# Generate a grid with values strictly greater than 0 and up to 1
 def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, generation_scale):
     if scale == "Parsec":
         resolution = 1
@@ -17,25 +17,25 @@ def generate_grid(rows, cols, high_density_prob, low_density_prob, scale, genera
     normalized_low = low_density_prob / total_prob
 
     # Create the grid
-    density_values = np.linspace(0.01, 1, 10)
+    energy_values = np.linspace(0.01, 1, 10)
     probabilities = [normalized_low] * 5 + [normalized_high] * 5
     probabilities = np.array(probabilities) / np.sum(probabilities)
 
-    grid = np.random.choice(density_values, size=(rows, cols), p=probabilities)
+    grid = np.random.choice(energy_values, size=(rows, cols), p=probabilities)
     # Apply generation scale as contrast adjustment
     grid = grid ** generation_scale
     return grid
 
-# Compute timeflow with a smooth gradient
-def compute_timeflow(density_grid):
-    return 1 / (1 + density_grid)
+# Compute a secondary field based on the energy grid
+def compute_secondary_field(energy_grid):
+    return 1 / (1 + energy_grid)  # Example inverse relationship
 
 # Initialize default scale in session_state
 if "scale" not in st.session_state:
     st.session_state.scale = "Parsec"
 
 # Streamlit UI
-st.title("Interactive Cosmological Map of Regional Timeflow and Density")
+st.title("Pixel Pattern Emergence Grid")
 st.sidebar.header("Controls")
 
 # Grid Settings at the top
@@ -51,10 +51,10 @@ with col2:
     if st.button("Kiloparsec"):
         st.session_state.scale = "Kiloparsec"
 
-# Density and Generation Scale Parameters
-st.sidebar.subheader("Density Parameters")
-low_density_prob = st.sidebar.slider("Low-Density Probability (L%)", 1, 100, 50)  # Minimum set to 1%
-high_density_prob = st.sidebar.slider("High-Density Probability (H%)", 1, 100, 50)  # Minimum set to 1%
+# Energy Dispersion Parameters
+st.sidebar.subheader("Regional Energy Dispersion")
+low_density_prob = st.sidebar.slider("Low Dispersion Probability (%)", 1, 100, 50)
+high_density_prob = st.sidebar.slider("High Dispersion Probability (%)", 1, 100, 50)
 
 st.sidebar.subheader("Generation Scale")
 generation_scale = st.sidebar.slider(
@@ -63,7 +63,7 @@ generation_scale = st.sidebar.slider(
     max_value=2.0, 
     value=1.0, 
     step=0.1, 
-    help="Adjusts the contrast between high-density (clusters) and low-density (voids), affecting the timeflow variations."
+    help="Adjusts the contrast between high and low dispersion regions, affecting pattern emergence."
 )
 
 # Toggle for zoom functionality
@@ -71,29 +71,29 @@ enable_zoom = st.sidebar.checkbox("Enable Zoom", value=True)
 
 # Retain grid pattern across toggles
 @st.cache_data
-def get_density_grid(grid_size, high_density_prob, low_density_prob, scale, generation_scale):
+def get_energy_grid(grid_size, high_density_prob, low_density_prob, scale, generation_scale):
     return generate_grid(grid_size, grid_size, high_density_prob, low_density_prob, scale, generation_scale)
 
-# Generate density grid and compute timeflow grid based on selected scale and generation scale
-density_grid = get_density_grid(grid_size, high_density_prob, low_density_prob, st.session_state.scale, generation_scale)
-timeflow_grid = compute_timeflow(density_grid)
+# Generate energy grid and compute secondary field
+energy_grid = get_energy_grid(grid_size, high_density_prob, low_density_prob, st.session_state.scale, generation_scale)
+secondary_field = compute_secondary_field(energy_grid)
 
 # Add a toggle for the view
 view_type = st.sidebar.radio(
     "View Grid Type", 
-    ["Density", "Timeflow"],
-    help="Switch between density and timeflow views."
+    ["Energy Dispersion", "Secondary Field"],
+    help="Switch between Energy Dispersion and Secondary Field views."
 )
 
 # Prepare the data for the selected grid
-if view_type == "Density":
-    data = density_grid
+if view_type == "Energy Dispersion":
+    data = energy_grid
     color_scale = "Viridis"
-    colorbar_title = "Density (0.01 to 1)"
+    colorbar_title = "Energy Dispersion (0.01 to 1)"
 else:
-    data = timeflow_grid
-    color_scale = "Plasma_r"  # Inverted colour scale for Timeflow
-    colorbar_title = "Timeflow (Slow to Fast)"
+    data = secondary_field
+    color_scale = "Plasma_r"  # Inverted colour scale for Secondary Field
+    colorbar_title = "Secondary Field (Derived)"
 
 # Create an interactive heatmap using Plotly
 fig = go.Figure()
@@ -128,24 +128,13 @@ st.plotly_chart(fig, use_container_width=True)
 with st.sidebar.expander("Purpose"):
     st.markdown(
         """
-        This app demonstrates a **timescape cosmology model**, focusing on the **inverse relationship** between **density** and **timeflow**:
+        This app serves as a **Pixel Pattern Emergence Grid**, a sandbox for exploring how regional energy dispersion drives emergent behaviours in a probability-based system.
         
-        - **High-density regions (clusters)** slow down timeflow.
-        - **Low-density regions (voids)** speed up timeflow.
+        - Adjust **probability parameters** to control the likelihood of high or low dispersion regions.
+        - Modify the **generation scale** to amplify or smooth patterns.
+        - Switch between views to explore different aspects of the simulated grid.
 
-        ### **Features**
-        - **Two Scales**:
-          - **Parsec**: For fine-grained details.
-          - **Kiloparsec**: For aggregated structures.
-        - **Dynamic Grid Resolution**: Adjusts dynamically to simulate **structured averaging**.
-        - **Generation Scale**: Adjusts the contrast between clusters (dense regions) and voids (sparse regions), amplifying or smoothing timeflow variations.
-        - **Interactive Visualisation**: Provides an intuitive understanding of how local density variations affect time dilation and regional timeflow.
-        
-        ### **How to Use**
-        - **Select Scale**: Choose between "Parsec" and "Kiloparsec" to explore different resolutions.
-        - **Adjust Density Parameters**: Use sliders to control high-density (clusters) and low-density (voids) probabilities.
-        - **Modify Generation Scale**: Use the slider to amplify or smooth the contrast between clusters and voids.
-        - **Toggle Views**: Switch between Density and Timeflow grid views to visualise their inverse relationship.
+        This tool provides an experimental environment for understanding the role of regional probabilities in forming larger-scale patterns, offering a conceptual proof of emergent behaviours at various scales.
         """
     )
 
@@ -153,13 +142,12 @@ with st.sidebar.expander("Purpose"):
 with st.sidebar.expander("Grid Views Explained"):
     st.markdown(
         """
-        **Density Grid**:
-        - **Lighter Colours**: Represent **higher density regions (clusters)**.
-        - **Darker Colours**: Represent **lower density regions (voids)**.
-        - **Generation Scale**: Adjusts the contrast between clusters and voids, affecting the grid's appearance.
+        **Energy Dispersion View**:
+        - **Lighter Colours**: Represent regions with higher energy dispersion.
+        - **Darker Colours**: Represent regions with lower energy dispersion.
 
-        **Timeflow Grid**:
-        - **Lighter Colours**: Represent **slower timeflow**, corresponding to **higher density regions (clusters)**.
-        - **Darker Colours**: Represent **faster timeflow**, corresponding to **lower density regions (voids)**.
+        **Secondary Field View**:
+        - **Lighter Colours**: Represent derived values from higher dispersion regions.
+        - **Darker Colours**: Represent derived values from lower dispersion regions.
         """
     )
